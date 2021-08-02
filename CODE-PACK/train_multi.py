@@ -31,13 +31,13 @@ ic("Importing Dataset")
 os.environ["CUDA_VISIBLE_DEVICES"] = '0, 1'
 using_229 = False
 using_my_data = True #'both'
-testing = True
+testing = False
 class_weight = False
 version = '20'   ###450 already has weights
 ic(using_229, using_my_data, testing, version, class_weight)
-studies = 9000
-n_folds = 6
-num_epochs = 100
+studies = 20000
+n_folds = 1
+num_epochs = 50
 l_test = 5000
 l_val = l_test + 5000
 prop = l_val /(studies*n_folds + l_val)
