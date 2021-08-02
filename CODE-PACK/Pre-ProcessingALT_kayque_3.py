@@ -55,7 +55,7 @@ ic(is_lens[:3])# 700
 is_lens = 1.0*is_lens
 
 
-reload = False #### se quiser criar novamento os images_hjy.npy e/ou images_vis.npy
+reload = True #### se quiser criar novamento os images_hjy.npy e/ou images_vis.npy
 PP_VIS = True
 PP_HJY = True
 Plot_Stamps_HJY = False
