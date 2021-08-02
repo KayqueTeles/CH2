@@ -1,0 +1,69 @@
+absl-py @ file:///tmp/build/80754af9/absl-py_1615411205513/work
+astor==0.8.1
+astropy==4.2.1
+asttokens==2.0.5
+backcall==0.2.0
+certifi==2021.5.30
+colorama==0.4.4
+coverage @ file:///tmp/build/80754af9/coverage_1614614864940/work
+cycler==0.10.0
+Cython @ file:///tmp/build/80754af9/cython_1618432038002/work
+decorator==4.4.2
+executing==0.6.0
+gast @ file:///tmp/build/80754af9/gast_1597433534803/work
+graphviz==0.16
+grpcio @ file:///tmp/build/80754af9/grpcio_1614883945333/work
+h5py @ file:///tmp/build/80754af9/h5py_1593454119955/work
+icecream==2.1.0
+imageio==2.9.0
+importlib-metadata @ file:///tmp/build/80754af9/importlib-metadata_1617877314848/work
+ipython==7.23.1
+ipython-genutils==0.2.0
+jedi==0.18.0
+joblib==1.0.1
+Keras==2.2.4
+Keras-Applications @ file:///tmp/build/80754af9/keras-applications_1594366238411/work
+Keras-Preprocessing @ file:///tmp/build/80754af9/keras-preprocessing_1612283640596/work
+kiwisolver==1.3.1
+Markdown @ file:///tmp/build/80754af9/markdown_1614363832606/work
+matplotlib==3.4.1
+matplotlib-inline==0.1.2
+mkl-fft==1.3.0
+mkl-random @ file:///tmp/build/80754af9/mkl_random_1618853974840/work
+mkl-service==2.3.0
+mock @ file:///tmp/build/80754af9/mock_1607622725907/work
+networkx==2.5.1
+numpy @ file:///tmp/build/80754af9/numpy_and_numpy_base_1618497199865/work
+opencv-python==4.5.1.48
+pandas==1.2.4
+parso==0.8.2
+pexpect==4.8.0
+pickleshare==0.7.5
+Pillow==8.2.0
+prompt-toolkit==3.0.18
+protobuf==3.14.0
+ptyprocess==0.7.0
+pydot @ file:///tmp/build/80754af9/pydot_1615394953203/work
+pyerfa==2.0.0
+Pygments==2.9.0
+pyparsing @ file:///home/linux1/recipes/ci/pyparsing_1610983426697/work
+python-dateutil==2.8.1
+pytz==2021.1
+PyWavelets==1.1.1
+PyYAML==5.4.1
+scikit-image==0.18.1
+scikit-learn==0.24.2
+scipy @ file:///tmp/build/80754af9/scipy_1618852618548/work
+six @ file:///tmp/build/80754af9/six_1605205313296/work
+tensorboard==1.13.1
+tensorflow==1.13.1
+tensorflow-estimator==1.13.0
+termcolor==1.1.0
+threadpoolctl==2.1.0
+tifffile==2021.4.8
+traitlets==5.0.5
+typing-extensions @ file:///home/ktietz/src/ci_mi/typing_extensions_1612808209620/work
+wcwidth==0.2.5
+Werkzeug @ file:///home/ktietz/src/ci/werkzeug_1611932622770/work
+wget==3.2
+zipp @ file:///tmp/build/80754af9/zipp_1615904174917/work
