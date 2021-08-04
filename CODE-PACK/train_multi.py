@@ -33,9 +33,10 @@ using_229 = False
 using_my_data = True #'both'
 testing = False
 class_weight = False
+load_model = False
 version = '20'   ###450 already has weights
 ic(using_229, using_my_data, testing, version, class_weight)
-studies = 20000
+studies = 30000
 n_folds = 1
 num_epochs = 50
 l_test = 5000
@@ -46,7 +47,6 @@ if testing:
     num_samples = studies = 100
     n_folds = 2
     num_epochs = 3
-    version = 'T'
     l_test = 100
     l_val = l_test + 50
 
@@ -89,7 +89,7 @@ images_vis = utils.img_conv_3(images_vis)
 images_vis = images_vis[:(l_val+num_samples*n_folds),:,:,:]
 ic(images_vis.shape)
 
-channels_vis = ['H', 'J', 'Y']
+channels_vis = ['VIS1', 'VIS2', 'VIS3']
 
 pad = np.zeros((images_vis.shape[0],images_vis.shape[1],images_vis.shape[2],1), dtype="float32")
 ic(pad.shape)
@@ -111,7 +111,6 @@ images_hjy = images_hjy[:(l_val+num_samples*n_folds),:,:,:]
 
 #index = utils.print_multi(num_samples, images_hjy, images_vis, num_prints=2, num_channels=images_hjy.shape[3], version=version, input_shape=images_hjy.shape[1], step='BOTH_bf_pp', index=0)
 #index = utils.save_clue(images_vis, num_samples, version, 'BOTH_bf_pp', images_vis.shape[1], 3, 3, 0)
-utils.histo_all(images_hjy, images_vis, True, channels_vis)
 
 del images_vis
 
@@ -141,6 +140,9 @@ for fo in range(n_folds):
     X_train_hjy = X_train_hjy2[fo*num_samples:((fo+1)*(num_samples)-1),:,:,:]
     X_train_vis = X_train_vis2[fo*num_samples:((fo+1)*(num_samples)-1),:,:,:]
 
+    if n_folds: #
+        del is_lens, Y_train2, X_train_hjy2, X_train_vis2
+
     ic("Building Model")
 
     if class_weight:
@@ -157,7 +159,7 @@ for fo in range(n_folds):
         ic('Weight for class 0: {:.2f}'.format(weight_for_0))
         ic('Weight for class 1: {:.2f}'.format(weight_for_1))
 
-
+    ic(' -- Creating model')
     inp_hjy = Input((66,66,3))
     efn_arc_hjy = efn.EfficientNetB2(input_tensor = inp_hjy, weights='imagenet')
 
@@ -186,7 +188,7 @@ for fo in range(n_folds):
     ic("Training Model")
 
     model_name = "efn02_vis_y_01_v_%s_st_%s.hdf5" % (version, study)
-    batch_size = 35 *2  ##ORIGINALLY * 5 ##35*2
+    batch_size = 35*2  ##ORIGINALLY * 5 ##35*2
     if os.path.exists("final_model/" + model_name):
         os.remove("final_model/" + model_name)
 
@@ -214,16 +216,17 @@ for fo in range(n_folds):
 
     gen_flow = gen_flow_for_two_inputs(X_train_vis, X_train_hjy, Y_train)
 
-    #model.load_weights("final_model/" + model_name)
-
-    if not class_weight:
-        history = model.fit_generator(gen_flow, epochs = num_epochs,  
-               verbose = 1, validation_data= ([val_vis, val_hjy], is_val), callbacks=[check], 
-               steps_per_epoch = X_train_hjy.shape[0] // batch_size)#, class_weight=Class_WEIGHT)
+    if load_model:
+        model.load_weights("final_model/" + model_name)
     else:
-        history = model.fit_generator(gen_flow, epochs = num_epochs,  
-               verbose = 1, validation_data= ([val_vis, val_hjy], is_val), callbacks=[check], 
-               steps_per_epoch = X_train_hjy.shape[0] // batch_size, class_weight=Class_WEIGHT)
+        if not class_weight:
+            history = model.fit_generator(gen_flow, epochs = num_epochs,  
+                   verbose = 1, validation_data= ([val_vis, val_hjy], is_val), callbacks=[check], 
+                   steps_per_epoch = X_train_hjy.shape[0] // batch_size)#, class_weight=Class_WEIGHT)
+        else:
+            history = model.fit_generator(gen_flow, epochs = num_epochs,  
+                   verbose = 1, validation_data= ([val_vis, val_hjy], is_val), callbacks=[check], 
+                   steps_per_epoch = X_train_hjy.shape[0] // batch_size, class_weight=Class_WEIGHT)
 
 
     ic("Getting Statistics")
@@ -291,8 +294,8 @@ for fo in range(n_folds):
         #else:
         #    fpr[fold, 2+i], tpr[fold, 2+i], roc_auc[fold, 2+i], thresh = utils.roc_curve_calculate(is_test[:, i], test_hjy, pred[:, i], 'effnetB2')
         #ic(len(fpr[fold, 2+i]), len(tpr[fold, 2+i]), roc_auc[fold, 2+i].shape, len(thresh))
-    fpr[fold, 2], tpr[fold, 2], roc_auc[fold, 2], thresh = utils.roc_curve_calculate(Y_train[:, 0], X_train_vis, pred[:, 0], 'effnetB2')
-    fpr[fold, 3], tpr[fold, 3], roc_auc[fold, 3], thresh = utils.roc_curve_calculate(Y_train[:, 1], X_train_hjy, pred[:, 1], 'effnetB2')
+    fpr[fold, 2], tpr[fold, 2], roc_auc[fold, 2], thresh = utils.roc_curve_calculate(is_test[:, 0], test_vis, pred[:, 0], 'effnetB2')
+    fpr[fold, 3], tpr[fold, 3], roc_auc[fold, 3], thresh = utils.roc_curve_calculate(is_test[:, 1], test_hjy, pred[:, 1], 'effnetB2')
     ic(len(fpr[fold, 3]), len(tpr[fold, 3]), roc_auc[fold, 3].shape, len(thresh))
     fs = fpr[fold, 3]
     ts = tpr[fold, 3]
@@ -345,8 +348,8 @@ for fo in range(n_folds):
         #else:
             #fpr[fold, 4+i], tpr[fold, 4+i], roc_auc[fold, 4+i], thresh = utils.roc_curve_calculate(is_test[:, i], test_hjy, pred[:, i], 'effnetB2')
         #ic(len(fpr[fold, 4+i]), len(tpr[fold, 4+i]), roc_auc[fold, 4+i].shape, len(thresh))
-    fpr[fold, 4], tpr[fold, 4], roc_auc[fold, 4], thresh = utils.roc_curve_calculate(Y_train[:, 0], X_train_vis, pred[:, 0], 'effnetB2')
-    fpr[fold, 5], tpr[fold, 5], roc_auc[fold, 5], thresh = utils.roc_curve_calculate(Y_train[:, 1], X_train_hjy, pred[:, 1], 'effnetB2')
+    fpr[fold, 4], tpr[fold, 4], roc_auc[fold, 4], thresh = utils.roc_curve_calculate(is_test[:, 0], test_vis, pred[:, 0], 'effnetB2')
+    fpr[fold, 5], tpr[fold, 5], roc_auc[fold, 5], thresh = utils.roc_curve_calculate(is_test[:, 1], test_hjy, pred[:, 1], 'effnetB2')
     ic(len(fpr[fold, 5]), len(tpr[fold, 5]), roc_auc[fold, 5].shape, len(thresh))
     fs = fpr[fold, 5]
     ts = tpr[fold, 5]
